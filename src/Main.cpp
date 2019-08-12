@@ -31,7 +31,7 @@ int main()
 		msg = "Point to Point from Leathrum at " + to_simple_string(timeLocal.time_of_day());
 
 		commint->SendMessage(msg, rand() < RAND_MAX /2 ? "Ntiana" : "OldLeathrum");
-
+		sleep(2);
 	}
 
 	return 0;
