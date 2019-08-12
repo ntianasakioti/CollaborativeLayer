@@ -31,6 +31,7 @@ public:
 private:
 	static std::vector<std::vector<std::string>> messageBacklog;
 	std::mutex messageMutex; 
+	std::map<std::string, int> nameIDs;
 };
 
 #endif

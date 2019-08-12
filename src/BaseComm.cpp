@@ -5,7 +5,20 @@ std::vector<std::vector<std::string>> BaseComm::messageBacklog;
 
 void BaseComm::Init()
 {
+	std::ifstream inf("config/nameIDs.txt"); 
 
+	int id;
+	std::string friendlyName; 
+	int numAs;
+	inf >> numAs; 
+	
+	while((inf>> id).good() && (inf>> friendlyName).good())
+	{
+	//	inf >> id; inf >> friendlyName;
+		//std::cout << id << " " << friendlyName << std::endl << std::flush; 
+		nameIDs.insert(std::make_pair(friendlyName,id));
+	}
+	inf.close(); 
 }
 
 bool BaseComm::CheckForMessage(int moduleId)
@@ -59,21 +72,6 @@ int BaseComm::GetId(std::string name)
 {
 	std::cout << "Name " << name << std::endl; 
 
-	std::ifstream inf("config/nameIDs.txt"); 
-	std::map<std::string, int> nameIDs;
-
-	int id;
-	std::string friendlyName; 
-	int numAs;
-	inf >> numAs; 
-	
-	while((inf>> id).good() && (inf>> friendlyName).good())
-	{
-	//	inf >> id; inf >> friendlyName;
-		std::cout << id << " " << friendlyName << std::endl << std::flush; 
-		nameIDs.insert(std::make_pair(friendlyName,id));
-	}
-	inf.close(); 
 	std::map<std::string,int>::iterator it = nameIDs.begin();
 
 	for(int i = 0 ; i < nameIDs.size(); i++)

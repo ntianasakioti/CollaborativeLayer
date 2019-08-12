@@ -86,7 +86,7 @@ void Comm::Init()
 		{
 			//std::cout << "Am I in the second loop" << std::endl; 
 			inf2 >> temp; 
-			std::cout << temp << std::endl;
+			//std::cout << temp << std::endl;
 			while(temp < 57)
 			{
 				inf2 >> temp; 
@@ -121,6 +121,9 @@ void Comm::Init()
 
 	AddMsgQueue(); 
 	BaseCommPtrs.insert(std::make_pair('B', new BlueComm()));
+
+	std::map<char,BaseComm *>::iterator BaseCommIt = BaseCommPtrs.begin(); 
+	BaseCommIt->second->Init();
 
 ///Code below will be used in actual implementation ///
 /*	for(int i = 0; i < numAS; i++)

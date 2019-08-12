@@ -119,18 +119,20 @@ void BlueComm::ListeningThread()
 
 int BlueComm::SendPtoP(std::string message, std::string dest)
 {
+
+	std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
 	// Find destination address //
 	
 	int id = GetId(dest);
+	std::cout << "Id i will send to " << id << std::endl << std::flush; 
 	std::map<int, std::string>::iterator it = BdAddresses.begin();
 	while(it->first != id)
 		it++;
 
+	std::cout << "bluetooth address " << it->second << std::endl << std::flush;
 	char destination[18];
 	strcpy(destination,(it->second).c_str());
 	
-	std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
-	//char destination[18] = "4C:ED:DE:9E:39:10";
 	int s, status; 
 	struct sockaddr_rc addr = {0};
 

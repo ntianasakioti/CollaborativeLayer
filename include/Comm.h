@@ -35,7 +35,7 @@ protected:
 	static Comm * instance;
 
 private:
-	std::string systemName = "OldThomas";												// AS friendly name 
+	std::string systemName = "Leathrum";												// AS friendly name 
 	const char* commTableFile = 
 	"../catkin_ws/src/parent_comm/config/commTable.txt";				// Configuration file for the shared Comm 
 																		// table that lists what communication is
