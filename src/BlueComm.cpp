@@ -77,20 +77,20 @@ void BlueComm::ListeningThread()
 	bind(t, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 
 	// put socket to listen mode 
-	listen(t,5);
+	listen(t,6);
 
 	// Just for testing to keep track of the loop
 	int counter = 0; 
 
 	while (terminate == false)
 	{
-	    	std::cout << "I AM IN THE WHILE LOOP " << std::endl; 
-	    	std::cout << "Counter " << counter << std::endl << std::flush; 
+	    	//std::cout << "I AM IN THE WHILE LOOP " << std::endl; 
+	    	//std::cout << "Counter " << counter << std::endl << std::flush; 
 
 		    // accept one connection 
 		    client = accept(t, (struct sockaddr *)&rem_addr, &opt);
 
-		    std::cout << "After I accepted connection " << std::endl; 
+		    //std::cout << "After I accepted connection " << std::endl; 
 		    ba2str(&rem_addr.rc_bdaddr, buf );
 		    fprintf(stderr,"accepted connection from %s\n", buf);
 		    memset(buf, 0, sizeof(buf));
@@ -120,16 +120,16 @@ void BlueComm::ListeningThread()
 int BlueComm::SendPtoP(std::string message, std::string dest)
 {
 
-	std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
+	//std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
 	// Find destination address //
 	
 	int id = GetId(dest);
-	std::cout << "Id i will send to " << id << std::endl << std::flush; 
+	//std::cout << "Id i will send to " << id << std::endl << std::flush; 
 	std::map<int, std::string>::iterator it = BdAddresses.begin();
 	while(it->first != id)
 		it++;
 
-	std::cout << "bluetooth address " << it->second << std::endl << std::flush;
+	//std::cout << "bluetooth address " << it->second << std::endl << std::flush;
 	char destination[18];
 	strcpy(destination,(it->second).c_str());
 	

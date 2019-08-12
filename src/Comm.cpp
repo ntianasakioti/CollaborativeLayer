@@ -43,8 +43,7 @@ void Comm::Init()
 	std::string friendlyName; 
 	while((inf>> id).good() && (inf>> friendlyName).good())
 	{
-		std::cout << "Am I stuck here " << std::endl;
-		std::cout << "Excuse me " << std::endl; 
+		//std::cout << "Am I stuck here " << std::endl;
 		//inf >> id; inf >> friendlyName;
 		std::cout << id << " " << friendlyName << std::endl << std::flush;
 		nameIdMap.insert(std::make_pair(friendlyName,id));
@@ -76,7 +75,7 @@ void Comm::Init()
 		exit(1);
 	}
 
-	std::cout << "Am i advancing? " << std::endl; 
+	//std::cout << "Am i advancing? " << std::endl; 
 	// populate communication table 
 	// maybe we should be grabbing just the row that has to do with this AS system 
 	for(int i = 0; i < numAS; i++)
@@ -185,14 +184,14 @@ int Comm::SendPtoP(std::string msg, std::string dest)
 
 int Comm::SendBd(std::string msg)
 {
-	std::cout << "In send Bd " << std::endl; 
+	//std::cout << "In send Bd " << std::endl; 
 	bool success = true; 
 
 	int id = getPtr('B')->GetId(systemName); 
-	std::cout << "id " << id << std::endl; 
+	//std::cout << "id " << id << std::endl; 
 	std::map<std::string,int>::iterator it = nameIdMap.begin();
 
-	for(int i = 0; i < nameIdMap.size(); i++)
+	/* for(int i = 0; i < nameIdMap.size(); i++)
 	{
 		if(i == id)
 		{
@@ -201,7 +200,8 @@ int Comm::SendBd(std::string msg)
 		}		
 		success = success == getPtr(commTable[id][i])->SendPtoP(msg, it->first);
 		it++; 
-	}
+	}*/
+	success = getPtr(commTable[id][4])->SendPtoP(msg,"Ntiana");
 	return success; 
 }
 
@@ -230,8 +230,8 @@ void Comm::AddMsgQueue()
 BaseComm * Comm::getPtr(char type)
 {
 	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
-	std::cout << "type " << type << std::endl; 
-	std::cout << BaseCommPtrs.size() << std::endl;
+//	std::cout << "type " << type << std::endl; 
+//	std::cout << BaseCommPtrs.size() << std::endl;
 	for(unsigned int i = 0; i < BaseCommPtrs.size(); i++)
 	{	
 		std::cout << it->first << std::endl; 
