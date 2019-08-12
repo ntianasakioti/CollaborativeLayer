@@ -191,7 +191,7 @@ int Comm::SendBd(std::string msg)
 	//std::cout << "id " << id << std::endl; 
 	std::map<std::string,int>::iterator it = nameIdMap.begin();
 
-	/* for(int i = 0; i < nameIdMap.size(); i++)
+    for(int i = 0; i < nameIdMap.size(); i++)
 	{
 		if(i == id)
 		{
@@ -200,8 +200,7 @@ int Comm::SendBd(std::string msg)
 		}		
 		success = success == getPtr(commTable[id][i])->SendPtoP(msg, it->first);
 		it++; 
-	}*/
-	success = getPtr(commTable[id][4])->SendPtoP(msg,"Ntiana");
+	}
 	return success; 
 }
 
