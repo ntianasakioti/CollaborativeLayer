@@ -1,4 +1,4 @@
-  0 1 2 3 4 
-0 n B B B B
-1 B n B B B
-2 B B n B B
+  0 1 2 3 
+0 n B B B
+1 B n B B
+2 B B n B
