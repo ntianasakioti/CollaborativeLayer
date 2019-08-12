@@ -171,7 +171,7 @@ int Comm::SendPtoP(std::string msg, std::string dest)
 	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
 	int sourceId = GetId(systemName);
 	int destId = GetId(dest);
-
+	std::cout << sourceId << " " << destId << std::endl; 
 	for(int i = 0; i < BaseCommPtrs.size(); i++)
 	{
 		return (getPtr(commTable[sourceId][destId])->SendPtoP(msg,dest)); 
@@ -256,6 +256,7 @@ int Comm::GetId(std::string name)
 		{
 			return it->second;
 		}
+		it++;
 	}
 
 	return -1; 
