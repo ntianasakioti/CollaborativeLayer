@@ -241,7 +241,7 @@ BaseComm * Comm::getPtr(char type)
 		}
 		it++;
 	}
-	std::cout << "failure " << std::endl; 
+	std::cout << "Initialization Problem. Check configuration files. " << std::endl; 
 
 	exit(EXIT_FAILURE);
 	BaseComm * ptr = nullptr; 

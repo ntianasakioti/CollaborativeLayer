@@ -1,5 +1,6 @@
 #include "BlueComm.h"
 
+#include <boost/date_time.hpp>
 BlueComm::BlueComm()
 {
 	std::cout << "Object created" << std::endl << std::flush; 
@@ -150,6 +151,7 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 	{
 		write(s,char_array,message.length());
 		close(s);
+		std::cout << "Success in sending " << boost::posix_time::second_clock::local_time().time_of_day() << std::endl << std::flush;
 		return 1; 
 	}
 	else if(status < 0 )
