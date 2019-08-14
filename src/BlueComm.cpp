@@ -55,8 +55,8 @@ void BlueComm::ListeningThread()
 
     bool terminate = false; 
     bool test = true; 
-    while(test == true)
-    {
+   // while(test == true)
+    //{
 	//std::cout<< "Launched my separate thread " << std::endl; 
 
 	// Set up Bluetooth Socket and address parameters
@@ -67,7 +67,7 @@ void BlueComm::ListeningThread()
 	socklen_t opt = sizeof(rem_addr);
 
 	// allocate a socket
-    	t = socket(AF_BLUETOOTH,SOCK_STREAM,BTPROTO_RFCOMM);
+    t = socket(AF_BLUETOOTH,SOCK_STREAM,BTPROTO_RFCOMM);
 
 	// bind socket to port 1 of the first available //
 	// local bluetooth adapter 
@@ -78,7 +78,7 @@ void BlueComm::ListeningThread()
 	bind(t, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 
 	// put socket to listen mode 
-	listen(t,6);
+	listen(t,20);
 
 	// Just for testing to keep track of the loop
 	int counter = 0; 
@@ -110,11 +110,12 @@ void BlueComm::ListeningThread()
 		counter++; 
 	}
 
-        terminate = false;    
+        terminate = false;   
+		//shutdown(t, SHUT_RD);
         close(t);
-    }
+   // }
 
-	// don't think I need the outer loop. As long as with this code it can accept enough connections 
+	//// don't think I need the outer loop. As long as with this code it can accept enough connections 
 	// to be determined upon testing to receive 6 messages. 
 }
 
@@ -133,6 +134,8 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 	//std::cout << "bluetooth address " << it->second << std::endl << std::flush;
 	char destination[18];
 	strcpy(destination,(it->second).c_str());
+
+	std::cout << "destination " << destination << std::endl << std::flush;
 	
 	int s, status; 
 	struct sockaddr_rc addr = {0};
@@ -149,7 +152,8 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 
 	if(status == 0)
 	{
-		write(s,char_array,message.length());
+		write(s, char_array,message.length());
+		//shutdown(s, SHUT_WR);
 		close(s);
 		std::cout << "Success in sending " << boost::posix_time::second_clock::local_time().time_of_day() << std::endl << std::flush;
 		return 1; 
@@ -157,6 +161,7 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 	else if(status < 0 )
 	{
 		perror("uh oh");
+		//shutdown(s, SHUT_WR);
 		close(s);
 		return 0; 
 	}
