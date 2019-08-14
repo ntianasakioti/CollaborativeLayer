@@ -180,7 +180,7 @@ int Comm::SendPtoP(std::string msg, std::string dest)
 	{
 		while(success == 0 )
 		{
-			success ==  (getPtr(commTable[sourceId][destId])->SendPtoP(msg,dest)); 
+			success = (getPtr(commTable[sourceId][destId])->SendPtoP(msg,dest)); 
 			sleep(5);
 		}
 	}
