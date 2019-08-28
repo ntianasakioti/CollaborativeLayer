@@ -2,6 +2,7 @@
 
 CommInt::CommInt()
 {
+	//TO DO: read module id from file
 	moduleId = 0; 
 
 	Comm::GetInstance()->Init(); 
@@ -15,23 +16,23 @@ CommInt::~CommInt()
 
 }
 
-bool CommInt::CheckForMessage()
+bool CommInt::CheckForMessage(int moduleId)
 {
-	return Comm::GetInstance()->CheckForMessage();
+	return Comm::GetInstance()->CheckForMessage(moduleId);
 }
 
-int CommInt::SendMessage(std::string message, std::string dest)
+int CommInt::SendMessage(std::string dest, Message * msg)
 {
 	if(dest == "All")
-		Comm::GetInstance()->SendBd(message);
+		return Comm::GetInstance()->SendBd(msg);
 	else
-		Comm::GetInstance()->SendPtoP(message, dest);
+		return Comm::GetInstance()->SendPtoP(msg, dest);
 
 	return 0;
 }
 
-std::string CommInt::GetMessage()
+Message * CommInt::GetMessage(int moduleId)
 {
-	return Comm::GetInstance()->GetMessage();
+	return Comm::GetInstance()->GetMessage(moduleId);
 }
 
