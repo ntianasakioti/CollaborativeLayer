@@ -8,9 +8,9 @@ class CommInt
 public:
 	CommInt();
 	~CommInt();
-	bool CheckForMessage();
-	int SendMessage(std::string dest, std::string message);
-	std::string GetMessage();
+	bool CheckForMessage(int moduleId);
+	int SendMessage(std::string dest, Message * msg);
+	Message * GetMessage(int moduleId);
 protected:
 
 private:

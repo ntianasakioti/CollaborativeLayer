@@ -168,7 +168,7 @@ void Comm::Init()
 	}*/
 }
 
-int Comm::SendPtoP(std::string msg, std::string dest)
+int Comm::SendPtoP(Message * msg, std::string dest)
 {	
 	std::cout << "In send p to p " << std::endl << std::flush; 
 	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
@@ -176,11 +176,13 @@ int Comm::SendPtoP(std::string msg, std::string dest)
 	int destId = GetId(dest);
 	//std::cout << sourceId << " " << destId << std::endl; 
 	int success = 0; 
+	int counter = 0; 
 	for(int i = 0; i < BaseCommPtrs.size(); i++)
 	{
-		while(success == 0 )
+		while(success == 0 && counter < 3)
 		{
 			success = (getPtr(commTable[sourceId][destId])->SendPtoP(msg,dest)); 
+			counter++;
 			sleep(5);
 		}
 	}
@@ -188,7 +190,7 @@ int Comm::SendPtoP(std::string msg, std::string dest)
 	return -1; 
 }
 
-int Comm::SendBd(std::string msg)
+int Comm::SendBd(Message * msg)
 {
 	std::cout << "In send Bd " << std::endl; 
 	bool success = true; 
@@ -205,8 +207,8 @@ int Comm::SendBd(std::string msg)
 			it++;
 			continue;
 		}	
-		//std::cout << "id " << id  << " " << "i " << i << std::endl << std::flush; 	
-		//std::cout << "dest name " << it->first << std::endl << std::flush;
+		std::cout << "id " << id  << " " << "i " << i << std::endl << std::flush; 	
+		std::cout << "dest name " << it->first << std::endl << std::flush;
 		success = success == getPtr(commTable[id][it->second])->SendPtoP(msg, it->first);
 		sleep(7);
 		it++; 
@@ -214,19 +216,20 @@ int Comm::SendBd(std::string msg)
 	return success; 
 }
 
-bool Comm::CheckForMessage()
+bool Comm::CheckForMessage(int moduleId)
 {
 	//if( messageBacklog.size() != 0)
 	//	return true; 
 	//else 
 	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
-	return it->second->CheckForMessage(0); 
+	return it->second->CheckForMessage(moduleId); 
 	
 }
 
-std::string Comm::GetMessage()
+Message * Comm::GetMessage( int moduleId)
 {
-	return "blah";
+	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
+	return it->second->GetMessage(moduleId);
 }
 
 void Comm::AddMsgQueue()

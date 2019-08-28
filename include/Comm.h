@@ -19,12 +19,12 @@ class Comm
 public:
 	static Comm * GetInstance();
 	void Init();														
-	int SendPtoP(std::string msg, std::string dest);																					
-	int SendBd(std::string msg);					
+	int SendPtoP(Message * msg, std::string dest);																					
+	int SendBd(Message * msg);					
 	// instead of above two, could have one function
 	//Send(source?,message, destination(could be "all"))
-	bool CheckForMessage();
-	std::string GetMessage();
+	bool CheckForMessage(int moduleId);
+	Message * GetMessage(int moduleId);
 	void AddMsgQueue();
 	BaseComm * getPtr(char type); 
 	int GetId(std::string name);

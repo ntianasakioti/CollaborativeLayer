@@ -4,7 +4,7 @@
 BlueComm::BlueComm()
 {
 	std::cout << "Object created" << std::endl << std::flush; 
-	InitComm(); 
+	//InitComm(); 
 }
 
 BlueComm::~BlueComm()
@@ -62,7 +62,7 @@ void BlueComm::ListeningThread()
 	// Set up Bluetooth Socket and address parameters
 	// to listen for a message 
 	struct sockaddr_rc loc_addr = {0}, rem_addr = {0};
-	char buf[1024] = {0};
+	int bufTemp[1024] = {0};
 	int t, client, bytes_read; 
 	socklen_t opt = sizeof(rem_addr);
 
@@ -77,6 +77,8 @@ void BlueComm::ListeningThread()
 	loc_addr.rc_channel = (uint8_t) 1; 
 	bind(t, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 
+	int messageSize; 
+
 	// put socket to listen mode 
 	listen(t,20);
 
@@ -85,28 +87,51 @@ void BlueComm::ListeningThread()
 
 	while (terminate == false)
 	{
-	    	//std::cout << "I AM IN THE WHILE LOOP " << std::endl; 
-	    	//std::cout << "Counter " << counter << std::endl << std::flush; 
+		//std::cout << "I AM IN THE WHILE LOOP " << std::endl; 
+		//std::cout << "Counter " << counter << std::endl << std::flush; 
 
-		    // accept one connection 
-		    client = accept(t, (struct sockaddr *)&rem_addr, &opt);
+		// accept one connection 
+		client = accept(t, (struct sockaddr *)&rem_addr, &opt);
 
-		    //std::cout << "After I accepted connection " << std::endl; 
-		    ba2str(&rem_addr.rc_bdaddr, buf );
-		    fprintf(stderr,"accepted connection from %s\n", buf);
-		    memset(buf, 0, sizeof(buf));
+		//std::cout << "After I accepted connection " << std::endl; 
+		//ba2str(&rem_addr.rc_bdaddr, buf );
+		//fprintf(stderr,"accepted connection from %s\n", buf);
+		//memset(buf, 0, sizeof(buf));
 
-		    // read message
-		    bytes_read = read(client, buf, sizeof(buf));
-		    if(bytes_read > 0 )
-		    {
-		    	printf("received[%s]\n", buf);
-		    	std::string s(buf);
-		    	MutexLock(); 
-		    	UpdateMessageLog(s);
-		    	MutexUnlock(); 
-		  //  	terminate = true; 
-		    }
+		// read message
+		char c;
+		bytes_read = read(client, bufTemp, sizeof(bufTemp));
+		if(bytes_read > 0 )
+		{
+			for(int i = 0; i < bytes_read; i++)
+			{
+					c = bufTemp[i];
+					std::cout << c  << std::endl;
+					//printf("received[%i]\n", buf + '0');
+					//buf++;
+			}
+		}
+
+
+		// put int data into buffer int pointer array 
+		int * buf = new int[1024];
+		for(int i = 0; i < 1024; i++)
+		{
+			buf[i] = bufTemp[i];
+		}
+
+		// create correct Message type 
+		Message * msg = getMsgFromId(buf[2]);
+		msg->SetId(buf[0]);
+		std::tuple<int, int> source = std::make_tuple(buf[4], buf[5]);
+		std::tuple<int, int> dest = std::make_tuple(buf[6], buf[7]);
+		msg->SetHeaderAttr(buf[1], buf[2], buf[3], source, dest);
+		msg->DeSerialize(buf);
+
+		MutexLock();
+		UpdateMessageLog(msg, buf[6]);
+		MutexUnlock();
+
 		counter++; 
 	}
 
@@ -119,7 +144,7 @@ void BlueComm::ListeningThread()
 	// to be determined upon testing to receive 6 messages. 
 }
 
-int BlueComm::SendPtoP(std::string message, std::string dest)
+int BlueComm::SendPtoP(Message * msg, std::string dest)
 {
 
 	//std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
@@ -142,20 +167,31 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 
 	s = socket(AF_BLUETOOTH,SOCK_STREAM,BTPROTO_RFCOMM);
 
+
 	addr.rc_family = AF_BLUETOOTH;
 	addr.rc_channel = (uint8_t) 1; 
 	str2ba(destination, &addr.rc_bdaddr);
 
-	char char_array[message.length() + 1];
-	strcpy(char_array, message.c_str()); 
+
+	int * dataBuf = new int(msg->GetSize() + msg->GetHeaderSize());
+	msg->Serialize(dataBuf);
+
+	int int_array[msg->GetSize() + msg->GetHeaderSize()];
+
+	for(int i = 0; i < msg->GetSize() + msg->GetHeaderSize(); i++)
+	{
+		int_array[i] = dataBuf[i];
+	}
+
 	status = connect(s,(struct sockaddr*)&addr, sizeof(addr));
 
 	if(status == 0)
 	{
-		write(s, char_array,message.length());
+		write(s, int_array,sizeof(int_array));
 		//shutdown(s, SHUT_WR);
 		close(s);
 		std::cout << "Success in sending " << boost::posix_time::second_clock::local_time().time_of_day() << std::endl << std::flush;
+		delete dataBuf; 
 		return 1; 
 	}
 	else if(status < 0 )
@@ -168,23 +204,5 @@ int BlueComm::SendPtoP(std::string message, std::string dest)
 	close(s);
 	return 0;
 
-}
-
-int BlueComm::SendBd(std::string message)
-{
-	std::map<int, std::string>::iterator it = BdAddresses.begin();
-	int returnV = 1; 
-
-	for(int i = 0 ; i < BdAddresses.size(); i++)
-	{
-		std::cout << "Sendbd for loop Iteration " << i << std::endl << std::flush; 
-		if(it->first != GetId(name))
-		{
-			std::cout << "Before Send to P to P " << std::endl << std::flush; 
-			returnV = SendPtoP(message,it->second);
-		} 
-		std::cout << "After SendPtoPt" << std::endl << std::flush; 
-	}
-	return 0; 
 }
 

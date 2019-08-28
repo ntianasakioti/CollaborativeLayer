@@ -1,6 +1,5 @@
 #ifndef BLUECOMM_H
 #define BLUECOMM_H
-#pragma once
 
 #include <string>
 #include <vector>
@@ -55,7 +54,7 @@ public:
 	*/
 
 
-	int SendPtoP(std::string message, std::string dest); 
+	int SendPtoP(Message *  msg, std::string dest); 
 	/*
 		SendPtoP
 			Parameters:
@@ -65,17 +64,6 @@ public:
 				none currently (possibly boolean for check of sending success)
 			Behavior:
 				Sends message for point-to-point communication
-	*/
-
-	int SendBd(std::string message);
-	/*
-		SentBd
-			Parameters: 
-				string type (will be changed to Message type) message to be sent
-			Return value:
-				none currently (possibly boolean for check of sending success)
-			Behavior:
-				Sends message for broadcast communication (i.e. sends message to all Autonomous Systems in range)
 	*/
 
 	void Terminate();
@@ -106,7 +94,7 @@ protected:
 private:
 	std::string name;													// AS name as used in communication (i.e. "rover 1", "red", "blue")
 	int id; 															// AS ID
-	//bool terminate;														// termination signal 
+	//bool terminate;													// termination signal 
 	//pthread_t ltId; 													// listening thread ID
 	std::thread ltThread;												// listening thread
 	std::vector<std::string> addresses;									// friendly names of rovers								

@@ -7,6 +7,11 @@
 #include <fstream>
 #include <map>
 #include <unistd.h>
+#include <stdio.h>
+#include <cstring>
+#include "Message.h"
+#include "Message1.h"
+#include "Message2.h"
 
 class BaseComm
 {
@@ -15,21 +20,23 @@ public:
 															/// so that derived classes can free up resources
 	void Init();
 	virtual void Setup() = 0;  
-	virtual int SendPtoP(std::string message, std::string dest) = 0;
-	virtual int SendBd(std::string message) = 0;
+	virtual int SendPtoP(Message * msg, std::string dest) = 0;
 	bool CheckForMessage(int moduleId);
-	std::string GetMessage(int moduleId);
-	void UpdateMessageLog(std::string s); 
-	void AddMessageQueue();
+	Message * GetMessage(int moduleId);
+	void UpdateMessageLog(Message * msg, int moduleId); 
 	void UpdateMsgLogNum();
 	void MutexLock();
-	void MutexUnlock(); 
+	void MutexUnlock();
 	
-	int GetMessageLogSize();
+
+	Message * getMsgFromId(int id);
+	
+	int GetMessageLogSize(int moduleId);
 	int GetId(std::string name); 
 
 private:
-	static std::vector<std::vector<std::string>> messageBacklog;
+	int ASid = 1; 
+	static std::vector<std::vector<Message*>> messageBacklog;
 	std::mutex messageMutex; 
 	std::map<std::string, int> nameIDs;
 };
