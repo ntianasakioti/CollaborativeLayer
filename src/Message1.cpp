@@ -8,7 +8,7 @@ Message1::Message1()
     SetMsgTypeInt(0);
 
 
-    _data = " ";
+   // _data = " ";
     _randomNum = 0;
     _character = ' ';
     _secondNum = 0.0;
@@ -21,13 +21,14 @@ Message1::~Message1()
 
 std::string Message1::getData()
 {
-    return _data;
+	return "blah";
+    //return _data;
 }
 
-void Message1::Initialize(std::string msg, int num1, char char1, double num2)
+void Message1::Initialize(int num1, char char1, double num2)
 {
     std::cout << "Initialize" << std::endl;
-    _data = msg;
+   // _data = msg;
     _randomNum = num1;
     _character = char1;
     _secondNum = num2; 
@@ -38,7 +39,7 @@ int Message1::GetSize()
 {
     // add and return all sizes ( 1 for integers and characters sinze they will be represented by 
     // one integer)
-    return _data.length() + 1 + 1 + (sizeof(_secondNum)/sizeof(int));
+    return ( 1 + 1 + (sizeof(_secondNum)/sizeof(int)));
 }
 
 void Message1::Serialize(int * dataBuf)
@@ -47,43 +48,58 @@ void Message1::Serialize(int * dataBuf)
 	int *dataRef;
 
     std::cout << "HeaderSize " << Message::_headerSize << std::endl; 
+
+
+	/// MY STRING TO INT ARRAY CONVERSION ///
     // convert string to 8 element integer array
-    int elementsInIndex = ceil(_data.length()/double((sizeof(_data)/sizeof(int))));
-    int intArray[elementsInIndex];
-    std::string tempString;
-    int myArray[sizeof(_data)/sizeof(int)];
-	int stringIndex = 0; 
+	/* 
+    int elementsInIndex = ceil(_data.length()/double((sizeof(_data)/sizeof(int))));														// number of characters in each myArray index
+    int intArray[elementsInIndex];																										// array holding the characters turned into integers for one index of myArray
+    std::string tempString;																												// temporary string used in the serialization
+    int myArray[sizeof(_data)/sizeof(int)];																								// int array that will hold the serialized string size (8)
+	int stringIndex = 0; 																												// used to keep track of the iteration through the original string
+
+	// For the number of indexes set aside for the string (8)
     for(int i = 0; i < sizeof(_data)/sizeof(int); i++)
     {
 		std::cout << i << std::endl; 
-       
+
+		// For the number of elements in the index 
 		for(int j = 0; j < elementsInIndex; j++)
 		{
-			if (_data.length() < sizeof(_data)/sizeof(int))
-       		{
-				if(stringIndex > _data.length())
-				{
-					std::cout << "Ending eh " << std::endl; 
-                    tempString = tempString + " ";
-					continue; 
-				}                                            
-        	}
+			// if the string is less than 8 characters long
+		//	if (_data.length() < sizeof(_data)/sizeof(int))
+       	//	{
+				   // if we have surpassed the end of the string 
+				   if(stringIndex > _data.length())
+				   {
+					   std::cout << "Ending eh " << std::endl; 
+					   tempString = tempString + "0";
+					   std::cout << "blah " << tempString << std::endl; 
+					    			// was continue; 
+					}                                            
+        //	}
 
-			if(stringIndex > _data.length())
-				tempString = tempString + " ";
-
-			intArray[j] = int(_data[stringIndex++]);
+		else{	intArray[j] = int(_data[stringIndex++]);
 			std::cout << "int " << intArray[j] << std::endl;
 			tempString = tempString + std::to_string(intArray[j]);
 		}
-
-		if( stringIndex > _data.length())
-		{
-			myArray[i] = 0;
-			continue; 
 		}
 
-		std::cout << "temp string " << tempString << std::endl; 
+		/* if( stringIndex > _data.length())
+		{
+            std::cout<< "stringIndex " << stringIndex << "greater than data length " << _data.length() << std::endl; 
+			myArray[i] = 0; 
+            if( i == sizeof(_data)/sizeof(int) -1)
+			{
+				std::cout << "Before Setting my array " << std::endl; 
+                myArray[i] = stoi(tempString);
+				std::cout << "After setting my array " << std::endl; 
+			}
+			break; 				//was continue; seems wrong still 
+		}*/
+
+	/* 	std::cout << "temp string " << tempString << std::endl; 
         myArray[i] = stoi(tempString);
         tempString = "\0";
     }
@@ -92,7 +108,14 @@ void Message1::Serialize(int * dataBuf)
     dataRef = myArray; 
 	for (int i = 0; i < sizeof(_data)/sizeof(int); ++i){
         std::cout << "index " << index <<  std::endl; 
-        dataBuf[index++] = dataRef[i];}
+        dataBuf[index++] = dataRef[i];}*/
+
+
+	/// Dr. L's STRING TO INT ARRAY CONVERSION ///
+
+
+	/// Just 8 char String Conversion ///
+
     dataRef = (int*) (&_randomNum);
     for(int i = 0; i < sizeof(_randomNum)/sizeof(int); i++){
         dataBuf[index++] = dataRef[i];}
@@ -100,12 +123,14 @@ void Message1::Serialize(int * dataBuf)
     dataRef = (int*) (&temp);
     for(int i = 0; i < sizeof(temp)/sizeof(int); i++){
         dataBuf[index++] = dataRef[i];}
+        /// DOUBLE conversion like this will work but when you output the single element it will not look right
     dataRef = (int*) (&_secondNum);
     for(int i = 0; i < sizeof(_secondNum)/sizeof(int); i++){
+        std::cout << "double " << dataRef[i] << std::endl; 
         dataBuf[index++] = dataRef[i];}
 
-    std::cout << "Serialize:  " <<  ": buffersize = " << GetSize() << std::endl << std::flush;
-	for (int i = 0; i < GetSize(); i++) {
+    std::cout << "Serialize:  " <<  ": buffersize = " << GetSize() + Message::_headerSize << std::endl << std::flush;
+	for (int i = 0; i < GetSize() + Message::_headerSize; i++) {
 		std::cout << dataBuf[i] << " "; }
 	std::cout << std::endl << std::flush;
 }
@@ -122,6 +147,7 @@ void Message1::DeSerialize(int * dataBuf)
     int * dataRef;
 
     // get string from size 8 int array
+	/* 
     std::string temp;
 	std::string temp2;
 	int tempInt;
@@ -175,14 +201,14 @@ void Message1::DeSerialize(int * dataBuf)
 	}
 	_data = myString; 
 	std::cout << "MY STRING " << _data << std::endl; 
-
+*/
     // Continuing deserialization
      dataRef = (int*) (&_randomNum);
     for(int i = 0; i < sizeof(_randomNum)/sizeof(int); i++){
         dataRef[i] = dataBuf[index++];}
     int tempNum = (int) _character;
     dataRef = (int*) (&tempNum);
-    for(int i = 0; i < sizeof(temp)/sizeof(int); i++){
+    for(int i = 0; i < sizeof(tempNum)/sizeof(int); i++){
         dataRef[i] = dataBuf[index++];}
     dataRef = (int*) (&_secondNum);
     for(int i = 0; i < sizeof(_secondNum)/sizeof(int); i++){

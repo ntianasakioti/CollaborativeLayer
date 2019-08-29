@@ -53,15 +53,18 @@ int * Message::GetBuffer()
 
 void Message::SetBufHeader(int * buf)
 {
+    buf[0] = _id;   
+    buf[1] = _commType;
+    buf[2] = _msgTypeInt;  
+    buf[3] = _msgDataSize;    
+    // hard coded for testing
+    buf[4], buf[5], buf[6], buf[7] = 0; 
 
-   buf[0] = _id;   
-   buf[1] = _commType;
-   buf[2] = _msgTypeInt;  
-   buf[3] = _msgDataSize;                                  
-   buf[4] = std::get<0>(_sourceId);
-   buf[5] = std::get<1>(_sourceId);
-   buf[6] = std::get<0>(_destId);
-   buf[7] = std::get<1>(_destId);
+
+   // buf[4] = std::get<0>(_sourceId);
+   // buf[5] = std::get<1>(_sourceId);
+   // buf[6] = std::get<0>(_destId);
+   // buf[7] = std::get<1>(_destId);
 }
 
 void Message::SetHeaderAttr(char commType, int msgTypeInt, int msgDataSize, std::tuple<int, int> sourceId, std::tuple<int,int> destId)

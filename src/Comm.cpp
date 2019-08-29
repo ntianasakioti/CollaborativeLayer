@@ -11,6 +11,16 @@ Comm::Comm()
 Comm::~Comm()
 {
 	std::cout << "Terminating " << std::endl << std::flush; 
+	delete commTable;
+	delete commTableFile; 
+	delete nameIDsFile; 
+
+	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
+
+	while(it != BaseCommPtrs.end())
+	{
+		delete it->second;
+	}
 }
 
 Comm * Comm::GetInstance()
@@ -168,7 +178,7 @@ void Comm::Init()
 	}*/
 }
 
-int Comm::SendPtoP(Message * msg, std::string dest)
+int Comm::SendPtoP(int  * dataBuffer, std::string dest)
 {	
 	std::cout << "In send p to p " << std::endl << std::flush; 
 	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
@@ -181,16 +191,20 @@ int Comm::SendPtoP(Message * msg, std::string dest)
 	{
 		while(success == 0 && counter < 3)
 		{
-			success = (getPtr(commTable[sourceId][destId])->SendPtoP(msg,dest)); 
+			success = (getPtr(commTable[sourceId][destId])->SendPtoP(dataBuffer,dest)); 
 			counter++;
 			sleep(5);
 		}
 	}
 
-	return -1; 
+	std::cout << "Done with Comm Send P to P " << std::endl; 
+	if (success == 1)
+		return 1;
+
+	return 0; 
 }
 
-int Comm::SendBd(Message * msg)
+int Comm::SendBd(int * dataBuffer)
 {
 	std::cout << "In send Bd " << std::endl; 
 	bool success = true; 
@@ -209,7 +223,7 @@ int Comm::SendBd(Message * msg)
 		}	
 		std::cout << "id " << id  << " " << "i " << i << std::endl << std::flush; 	
 		std::cout << "dest name " << it->first << std::endl << std::flush;
-		success = success == getPtr(commTable[id][it->second])->SendPtoP(msg, it->first);
+		success = success == getPtr(commTable[id][it->second])->SendPtoP(dataBuffer, it->first);
 		sleep(7);
 		it++; 
 	}

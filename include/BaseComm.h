@@ -20,10 +20,10 @@ public:
 															/// so that derived classes can free up resources
 	void Init();
 	virtual void Setup() = 0;  
-	virtual int SendPtoP(Message * msg, std::string dest) = 0;
+	virtual int SendPtoP(int * dataBuffer, std::string dest) = 0;
 	bool CheckForMessage(int moduleId);
 	Message * GetMessage(int moduleId);
-	void UpdateMessageLog(Message * msg, int moduleId); 
+	void UpdateMessageLog(int * dataBuffer, int moduleId); 
 	void UpdateMsgLogNum();
 	void MutexLock();
 	void MutexUnlock();

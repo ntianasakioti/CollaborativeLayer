@@ -21,13 +21,18 @@ bool CommInt::CheckForMessage(int moduleId)
 	return Comm::GetInstance()->CheckForMessage(moduleId);
 }
 
-int CommInt::SendMessage(std::string dest, Message * msg)
+int CommInt::SendMessage(std::string dest, int * dataBuffer)
 {
 	if(dest == "All")
-		return Comm::GetInstance()->SendBd(msg);
+	{
+		return Comm::GetInstance()->SendBd(dataBuffer);
+		std::cout << "Done sending Bd at CommInt" << std::endl; 
+	}
 	else
-		return Comm::GetInstance()->SendPtoP(msg, dest);
-
+	{
+		return Comm::GetInstance()->SendPtoP(dataBuffer, dest);
+		std::cout << "Done Sending PtP at CommInt" << std::endl; 
+	}
 	return 0;
 }
 

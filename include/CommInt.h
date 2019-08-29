@@ -9,7 +9,7 @@ public:
 	CommInt();
 	~CommInt();
 	bool CheckForMessage(int moduleId);
-	int SendMessage(std::string dest, Message * msg);
+	int SendMessage(std::string dest, int * dataBuffer);
 	Message * GetMessage(int moduleId);
 protected:
 

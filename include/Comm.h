@@ -19,8 +19,8 @@ class Comm
 public:
 	static Comm * GetInstance();
 	void Init();														
-	int SendPtoP(Message * msg, std::string dest);																					
-	int SendBd(Message * msg);					
+	int SendPtoP(int * dataBuffer, std::string dest);																					
+	int SendBd(int * dataBuffer);					
 	// instead of above two, could have one function
 	//Send(source?,message, destination(could be "all"))
 	bool CheckForMessage(int moduleId);

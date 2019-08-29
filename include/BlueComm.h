@@ -54,7 +54,7 @@ public:
 	*/
 
 
-	int SendPtoP(Message *  msg, std::string dest); 
+	int SendPtoP(int *  dataBuffer, std::string dest); 
 	/*
 		SendPtoP
 			Parameters:

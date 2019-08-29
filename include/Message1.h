@@ -8,7 +8,7 @@ class Message1 : public Message
 {
 public:
     Message1();
-    void Initialize(std::string msg, int num1, char char1, double num2);
+    void Initialize(int num1, char char1, double num2);
     ~Message1();
     void Serialize(int * dataAddress);
     void DeSerialize(int * dataAddress);
@@ -16,7 +16,7 @@ public:
     std::string getData();
 
 private:
-   std::string _data;
+  // std::string _data;
    int _randomNum; 
    char _character;
    double _secondNum;

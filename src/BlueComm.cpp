@@ -4,7 +4,7 @@
 BlueComm::BlueComm()
 {
 	std::cout << "Object created" << std::endl << std::flush; 
-	//InitComm(); 
+	InitComm(); 
 }
 
 BlueComm::~BlueComm()
@@ -57,7 +57,7 @@ void BlueComm::ListeningThread()
     bool test = true; 
    // while(test == true)
     //{
-	//std::cout<< "Launched my separate thread " << std::endl; 
+	std::cout<< "Launched my separate thread " << std::endl; 
 
 	// Set up Bluetooth Socket and address parameters
 	// to listen for a message 
@@ -80,6 +80,7 @@ void BlueComm::ListeningThread()
 	int messageSize; 
 
 	// put socket to listen mode 
+	std::cout << "Waiting to listen " << std::endl;
 	listen(t,20);
 
 	// Just for testing to keep track of the loop
@@ -121,16 +122,17 @@ void BlueComm::ListeningThread()
 		}
 
 		// create correct Message type 
-		Message * msg = getMsgFromId(buf[2]);
-		msg->SetId(buf[0]);
-		std::tuple<int, int> source = std::make_tuple(buf[4], buf[5]);
-		std::tuple<int, int> dest = std::make_tuple(buf[6], buf[7]);
-		msg->SetHeaderAttr(buf[1], buf[2], buf[3], source, dest);
-		msg->DeSerialize(buf);
+		//Message * msg = getMsgFromId(buf[2]);
+		//msg->SetId(buf[0]);
+		//std::tuple<int, int> source = std::make_tuple(buf[4], buf[5]);
+		//std::tuple<int, int> dest = std::make_tuple(buf[6], buf[7]);
+		//msg->SetHeaderAttr(buf[1], buf[2], buf[3], source, dest);
+		//msg->DeSerialize(buf);
 
 		MutexLock();
-		UpdateMessageLog(msg, buf[6]);
+		UpdateMessageLog(buf, buf[6]);
 		MutexUnlock();
+		delete buf; 
 
 		counter++; 
 	}
@@ -144,19 +146,23 @@ void BlueComm::ListeningThread()
 	// to be determined upon testing to receive 6 messages. 
 }
 
-int BlueComm::SendPtoP(Message * msg, std::string dest)
+int BlueComm::SendPtoP(int * dataBuffer, std::string dest)
 {
 
-	//std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
+	std::cout << "In bluecomm's sent p to p" << std::endl << std::flush; 
 	// Find destination address //
 	
 	int id = GetId(dest);
 	//std::cout << "Id i will send to " << id << std::endl << std::flush; 
 	std::map<int, std::string>::iterator it = BdAddresses.begin();
 	while(it->first != id)
+	{
+		std::cout << "Comparing id " << it->first << "to " << id << std::endl;
 		it++;
+		std::cout << "incremented " << std:: endl; 
+	}
 
-	//std::cout << "bluetooth address " << it->second << std::endl << std::flush;
+	std::cout << "bluetooth address " << it->second << std::endl << std::flush;
 	char destination[18];
 	strcpy(destination,(it->second).c_str());
 
@@ -173,32 +179,48 @@ int BlueComm::SendPtoP(Message * msg, std::string dest)
 	str2ba(destination, &addr.rc_bdaddr);
 
 
-	int * dataBuf = new int(msg->GetSize() + msg->GetHeaderSize());
-	msg->Serialize(dataBuf);
+	//int * dataBuf = new int(msg->GetSize() + msg->GetHeaderSize()); 
+	//std::cout << "sizes " << msg->GetHeaderSize() << " " << msg->GetSize() << std::endl; 
+	//msg->Serialize(dataBuf);
 
-	int int_array[msg->GetSize() + msg->GetHeaderSize()];
+	std::cout << "After serialization " << std::endl; 
 
-	for(int i = 0; i < msg->GetSize() + msg->GetHeaderSize(); i++)
+	int int_array[dataBuffer[3 ]+ 8];
+	//int int_array[msg->GetSize() + msg->GetHeaderSize()];
+
+	std::cout << "After creating array " << std::endl; 
+
+	for(int i = 0; i < dataBuffer[3] + 8; i++)
 	{
-		int_array[i] = dataBuf[i];
+		std::cout << i << " " << dataBuffer[i] << std::endl; 
+		int_array[i] = dataBuffer[i];
 	}
+
+	std::cout << "Before I connect " << std::endl; 
 
 	status = connect(s,(struct sockaddr*)&addr, sizeof(addr));
 
+	std::cout << "After I connect " << std::endl; 
+	std::cout << "status " << status << std::endl; 
 	if(status == 0)
 	{
+		std::cout << "before writing " << std::endl;
 		write(s, int_array,sizeof(int_array));
-		//shutdown(s, SHUT_WR);
+		std::cout << "after writing " << std::endl; 
 		close(s);
 		std::cout << "Success in sending " << boost::posix_time::second_clock::local_time().time_of_day() << std::endl << std::flush;
-		delete dataBuf; 
 		return 1; 
 	}
 	else if(status < 0 )
 	{
+		std::cout  << "status " << status;
+		//delete msg; 
+		std::cout << "Before perror" << std::endl; 
 		perror("uh oh");
+		std::cout << "after perror" << std::endl; 
 		//shutdown(s, SHUT_WR);
 		close(s);
+		std::cout << "I closed my socket" << std::endl; 
 		return 0; 
 	}
 	close(s);

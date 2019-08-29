@@ -65,11 +65,13 @@ Message * BaseComm::GetMessage(int moduleId)
 	return newMsg;
 }
 
-void BaseComm::UpdateMessageLog(Message * msg, int moduleId)
+void BaseComm::UpdateMessageLog(int  * dataBuffer, int moduleId)
 {
 	std::cout << "Pushing back another message" << std::endl; 
-	
-	messageBacklog[moduleId].push_back(msg);
+	Message * newMsg = getMsgFromId(dataBuffer[2]);
+	newMsg->SetHeaderAttr(dataBuffer[1], dataBuffer[2], dataBuffer[3],std::make_pair(dataBuffer[4],dataBuffer[5]), std::make_pair(dataBuffer[6],dataBuffer[7]));
+	newMsg->DeSerialize(dataBuffer); 
+	messageBacklog[moduleId].push_back(newMsg);
 	//std::cout << messageBacklog[moduleId].at(0)->data << std::endl;
 }
 
