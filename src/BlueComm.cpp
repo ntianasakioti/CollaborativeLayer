@@ -107,7 +107,7 @@ void BlueComm::ListeningThread()
 			for(int i = 0; i < bytes_read; i++)
 			{
 					c = bufTemp[i];
-					std::cout << c  << std::endl;
+				//	std::cout << c  << std::endl;
 					//printf("received[%i]\n", buf + '0');
 					//buf++;
 			}
@@ -115,9 +115,10 @@ void BlueComm::ListeningThread()
 
 
 		// put int data into buffer int pointer array 
-		int * buf = new int[1024];
-		for(int i = 0; i < 1024; i++)
+		int * buf = new int[bufTemp[3]+8];
+		for(int i = 0; i < bufTemp[3]+ 8; i++)
 		{
+			std::cout << "temp buf " << bufTemp[i] << std::endl; 
 			buf[i] = bufTemp[i];
 		}
 
@@ -185,12 +186,12 @@ int BlueComm::SendPtoP(int * dataBuffer, std::string dest)
 
 	std::cout << "After serialization " << std::endl; 
 
-	int int_array[dataBuffer[3 ]+ 8];
+	int int_array[dataBuffer[4 ]+ 9];
 	//int int_array[msg->GetSize() + msg->GetHeaderSize()];
 
 	std::cout << "After creating array " << std::endl; 
 
-	for(int i = 0; i < dataBuffer[3] + 8; i++)
+	for(int i = 0; i < dataBuffer[4] + 9; i++)
 	{
 		std::cout << i << " " << dataBuffer[i] << std::endl; 
 		int_array[i] = dataBuffer[i];

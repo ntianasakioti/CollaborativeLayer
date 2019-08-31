@@ -178,15 +178,30 @@ void Comm::Init()
 	}*/
 }
 
-int Comm::SendPtoP(int  * dataBuffer, std::string dest)
+int Comm::SendPtoP(Message  * msg, std::string dest)
 {	
 	std::cout << "In send p to p " << std::endl << std::flush; 
-	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
 	int sourceId = GetId(systemName);
 	int destId = GetId(dest);
+
+	// Create message data buffer
+	int bufferSize = msg->GetSize() + msg->GetHeaderSize(); 
+	int * dataBuffer = new int[bufferSize]; 
+
+	// Set remainder header attributes
+	msg->SetMsgDataSize(bufferSize - msg->GetHeaderSize());
+	msg->SetDestId(GetId(dest),std::get<1>(msg->GetSourceId()));
+	msg->SetCommType(commTable[sourceId][destId]);
+	msg->SetBufHeader(dataBuffer);
+	msg->Serialize(dataBuffer);
+
+	std::map<char, BaseComm *>::iterator it = BaseCommPtrs.begin();
 	//std::cout << sourceId << " " << destId << std::endl; 
 	int success = 0; 
 	int counter = 0; 
+
+	// Iterate through communication pointers to get correct one
+	// Then send the data buffer
 	for(int i = 0; i < BaseCommPtrs.size(); i++)
 	{
 		while(success == 0 && counter < 3)
@@ -204,10 +219,21 @@ int Comm::SendPtoP(int  * dataBuffer, std::string dest)
 	return 0; 
 }
 
-int Comm::SendBd(int * dataBuffer)
+int Comm::SendBd(Message * msg)
 {
 	std::cout << "In send Bd " << std::endl; 
 	bool success = true; 
+
+	// Create message data buffer
+	int bufferSize = msg->GetSize() + msg->GetHeaderSize(); 
+	int * dataBuffer = new int[bufferSize]; 
+
+	// Set remainder header attributes
+	msg->SetMsgDataSize(bufferSize - msg->GetHeaderSize());
+	msg->SetDestId(-1,-1);
+	msg->SetCommType('n');
+	msg->SetBufHeader(dataBuffer);
+	msg->Serialize(dataBuffer);
 
 	int id = getPtr('B')->GetId(systemName); 
 	//std::cout << "id " << id << std::endl; 
@@ -223,6 +249,11 @@ int Comm::SendBd(int * dataBuffer)
 		}	
 		std::cout << "id " << id  << " " << "i " << i << std::endl << std::flush; 	
 		std::cout << "dest name " << it->first << std::endl << std::flush;
+		// could keep editing the buffer for it to have correct destination, and type
+		//dataBuffer[2] = (int) commTable[id][it->second];
+		//dataBuffer[7] = it->second;
+		//dataBuffer[8] = dataBuffer[1];
+		
 		success = success == getPtr(commTable[id][it->second])->SendPtoP(dataBuffer, it->first);
 		sleep(7);
 		it++; 

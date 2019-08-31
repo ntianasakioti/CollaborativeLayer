@@ -19,17 +19,18 @@ public:
 	virtual void Serialize(int * dataBuf) = 0; 
 	virtual void DeSerialize(int * dataBuf) = 0; 
 	virtual int GetSize() = 0; 
-	int * GetBuffer();
-	void CreateBuffer(int size, int ASid); 
-	std::string GetMessage();
 	std::string GetSender();
-	void SetId(int id);
-	int GetTypeInt();
-	void SetMsgTypeString(std::string msgTypeString);
-	void SetMsgTypeInt(int msgTypeInt);
+	void SetId(int msgASId, int myASId, int msgId);
+	void SetSourceId(int ASId, int moduleId);
+	std::tuple<int, int> GetSourceId();
+	void SetDestId(int ASId, int moduleId);
+	void SetCommType(char commType);
+	void SetMsgDataSize(int msgDataSize);
+	void SetMsgType(int msgType);
+	int GetType();
 	void SetBufHeader(int * buf);
-	void SetHeaderAttr(char commType, int msgTypeInt, int msgDataSize,std::tuple<int, int> sourceId, std::tuple<int,int> destId);
 	int GetHeaderSize();
+	void SetHeaderAttr(std::tuple<int,int> msgId, int commType, int msgSize, int msgType, std::tuple<int, int> sourceId, std::tuple<int,int> destId);
 
    std::string data;
 
@@ -40,13 +41,13 @@ protected:
 	static int _id; 																		// message id for this rover
  
 
-private:																				// buffer containing message data
+private:	
+	std::tuple<int, int> _msgId;															// msg ID: <AS id, msg id> 
 	std::tuple<int,int> _sourceId;															// source ID : < AS id, module id>	
 	std::tuple<int,int> _destId;  															// destination ID: <AS id, module id>
 	char _commType; 																		// communication type (B for Bluetooth, R for Ros)	
-	int _msgDataSize; 																	// message size  -> this would make the header size variable as the message size will be variable
-	std::string _msgTypeString;																// will be a string of a class name so that we know the correct deserialize method to call
-	int _msgTypeInt; 
+	int _msgDataSize; 																		// message size 
+	int _msgType; 
 };
 
 #endif

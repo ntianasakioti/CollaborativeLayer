@@ -3,8 +3,7 @@
 Message2::Message2()
 {
     // All messages need to have the following two set" 
-    SetMsgTypeString("Message2");
-    SetMsgTypeInt(1);
+    SetMsgType(1);
 
     _data = " ";
     _character = ' ';

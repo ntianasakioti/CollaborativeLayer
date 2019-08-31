@@ -9,12 +9,13 @@ public:
 	CommInt();
 	~CommInt();
 	bool CheckForMessage(int moduleId);
-	int SendMessage(std::string dest, int * dataBuffer);
+	int SendMessage(std::string dest, Message * msg);
 	Message * GetMessage(int moduleId);
 protected:
 
 private:
-	int moduleId; 
+	int _moduleId; 
+	int _ASId; 
 	//static int counter = 0;
 }; 
 

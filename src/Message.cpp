@@ -1,82 +1,93 @@
 #include "Message.h"
 
 int Message::_id = 0;
-int Message::_headerSize = 8; 
-
-std::string Message::GetMessage()
-{
-    return "hi";
-}
+int Message::_headerSize = 9; 
 
 std::string Message::GetSender()
 {
     return "who";
 }
 
-void Message::SetId(int id)
+void Message::SetId(int msgASId, int myASId, int msgId)
 {
-    _id = id; 
-}
-
-int Message::GetTypeInt()
-{
-    return _msgTypeInt;
-}
-void Message::SetMsgTypeString(std::string msgTypeString)
-{
-    _msgTypeString = msgTypeString;
-}
-
-void Message::SetMsgTypeInt(int msgTypeInt)
-{
-    _msgTypeInt = msgTypeInt; 
-}
-
-void Message::CreateBuffer(int size, int ASid)
-{
-    if(std::get<0>(_sourceId) == ASid)
+    // If the AS ids match, then we need to increment the static id 
+    if( msgASId == myASId)
     {
-        _id++;//
-        _msgDataSize = size; 
+        _id++; 
+        _msgId = std::make_pair(msgASId, _id);
     }
-
-   // _buf = new int[size + Message::_headerSize];
-    std::cout << "End of create buffer" << std::endl;
+    // If the AS ids don't match it, then we set the id using the buffer information provided
+    // by the parameters
+    else
+    {
+        _msgId = std::make_pair(msgASId, msgId);
+    }
+     
 }
 
-int * Message::GetBuffer()
+void Message::SetSourceId(int ASId, int moduleId)
 {
-    int * address = new int[5];
-   // int * address = &(_buf[0+ Message::_headerSize]);
-    return address; 
+    _sourceId = std::make_pair(ASId, moduleId);
+}
+
+std::tuple<int, int> Message::GetSourceId()
+{
+    return _sourceId;
+}
+
+void Message::SetDestId(int ASId, int moduleId)
+{
+    _destId = std::make_pair(ASId, moduleId);
+}
+
+void Message::SetCommType(char commType)
+{
+    _commType = commType;
+}
+	
+void Message::SetMsgDataSize(int msgDataSize)
+{
+    _msgDataSize = msgDataSize;
+}
+
+void Message::SetMsgType(int msgType)
+{
+    _msgType = msgType; 
+}
+
+int Message::GetType()
+{
+    return _msgType;
 }
 
 void Message::SetBufHeader(int * buf)
 {
-    buf[0] = _id;   
-    buf[1] = _commType;
-    buf[2] = _msgTypeInt;  
-    buf[3] = _msgDataSize;    
+    buf[0] = std::get<0>(_msgId);   
+    buf[1] = std::get<1>(_msgId);
+    buf[2] = int (_commType);
+    buf[3] = _msgType;  
+    buf[4] = _msgDataSize;    
     // hard coded for testing
-    buf[4], buf[5], buf[6], buf[7] = 0; 
+    //buf[4], buf[5], buf[6], buf[7] = 0; 
 
 
-   // buf[4] = std::get<0>(_sourceId);
-   // buf[5] = std::get<1>(_sourceId);
-   // buf[6] = std::get<0>(_destId);
-   // buf[7] = std::get<1>(_destId);
-}
-
-void Message::SetHeaderAttr(char commType, int msgTypeInt, int msgDataSize, std::tuple<int, int> sourceId, std::tuple<int,int> destId)
-{
-    _commType = commType;
-    _msgTypeInt = msgTypeInt;
-    _msgDataSize = msgDataSize;
-    _sourceId = sourceId;
-    _destId = destId; 
+    buf[5] = std::get<0>(_sourceId);
+    buf[6] = std::get<1>(_sourceId);
+    buf[7] = std::get<0>(_destId);
+    buf[8] = std::get<1>(_destId);
 }
 
 int Message::GetHeaderSize()
 {
     return Message::_headerSize;
+}
+
+void Message::SetHeaderAttr(std::tuple<int,int> msgId, int commType, int msgSize, int msgType, std::tuple<int, int> sourceId, std::tuple<int,int> destId)
+{
+    _msgId = msgId;
+    _sourceId = sourceId;
+    _destId = destId;
+    _commType = (char) commType;
+    _msgDataSize = msgSize;
+    _msgType = msgType;
 }

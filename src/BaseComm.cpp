@@ -18,8 +18,6 @@ Message * BaseComm::getMsgFromId(int id)
 	}
 }
 
-
-
 std::vector<std::vector<Message*>> BaseComm::messageBacklog; 
 
 void BaseComm::Init()
@@ -53,7 +51,7 @@ bool BaseComm::CheckForMessage(int moduleId)
 Message * BaseComm::GetMessage(int moduleId)
 {
 	MutexLock();
-	Message * newMsg = getMsgFromId(messageBacklog[moduleId].at(0)->GetTypeInt());
+	Message * newMsg = getMsgFromId(messageBacklog[moduleId].at(0)->GetType());
 
 
 	newMsg = (Message *) malloc(sizeof(messageBacklog[moduleId].at(0)));
@@ -69,7 +67,8 @@ void BaseComm::UpdateMessageLog(int  * dataBuffer, int moduleId)
 {
 	std::cout << "Pushing back another message" << std::endl; 
 	Message * newMsg = getMsgFromId(dataBuffer[2]);
-	newMsg->SetHeaderAttr(dataBuffer[1], dataBuffer[2], dataBuffer[3],std::make_pair(dataBuffer[4],dataBuffer[5]), std::make_pair(dataBuffer[6],dataBuffer[7]));
+	newMsg->SetHeaderAttr(std::make_pair(dataBuffer[0], dataBuffer[1]),dataBuffer[2], dataBuffer[3], dataBuffer[4], 
+	std::make_pair(dataBuffer[5], dataBuffer[6]), std::make_pair(dataBuffer[7], dataBuffer[8]));
 	newMsg->DeSerialize(dataBuffer); 
 	messageBacklog[moduleId].push_back(newMsg);
 	//std::cout << messageBacklog[moduleId].at(0)->data << std::endl;

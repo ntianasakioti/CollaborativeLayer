@@ -1,8 +1,6 @@
 #ifndef COMM_H
 #define COMM_H
 
-//#pragma once
-
 #include <string>
 #include <vector>
 #include <map>
@@ -19,8 +17,8 @@ class Comm
 public:
 	static Comm * GetInstance();
 	void Init();														
-	int SendPtoP(int * dataBuffer, std::string dest);																					
-	int SendBd(int * dataBuffer);					
+	int SendPtoP(Message * msg, std::string dest);																					
+	int SendBd(Message * msg);					
 	// instead of above two, could have one function
 	//Send(source?,message, destination(could be "all"))
 	bool CheckForMessage(int moduleId);
@@ -44,8 +42,7 @@ private:
 	"../catkin_ws/src/parent_comm/config/nameIDs.txt";					// AS friendly names to IDs
 	char ** commTable; 
 	std::map<std::string,int> nameIdMap; 		
-	std::map<char,BaseComm *> BaseCommPtrs;
-	//std::vector<BaseComm *> BaseCommPtrs; 		
+	std::map<char,BaseComm *> BaseCommPtrs;		
 };
 
 #endif

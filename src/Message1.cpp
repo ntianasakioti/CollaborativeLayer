@@ -4,8 +4,7 @@
 Message1::Message1()
 {
     // All messages need to have the following two set" 
-    SetMsgTypeString("Message1");
-    SetMsgTypeInt(0);
+    SetMsgType(0);
 
 
    // _data = " ";
@@ -28,6 +27,7 @@ std::string Message1::getData()
 void Message1::Initialize(int num1, char char1, double num2)
 {
     std::cout << "Initialize" << std::endl;
+	SetMsgType(0);
    // _data = msg;
     _randomNum = num1;
     _character = char1;
@@ -138,7 +138,7 @@ void Message1::Serialize(int * dataBuf)
 void Message1::DeSerialize(int * dataBuf)
 {
     std::cout << "Deserialize: " << ": buffersize = " << GetSize() << std::endl << std::flush;
-	for (int i = 0; i < GetSize(); i++) {
+	for (int i = Message::_headerSize; i < GetSize() + Message::_headerSize; i++) {
 		std::cout << dataBuf[i] << " "; }
 	std::cout << std::endl << std::flush;
 
@@ -206,11 +206,12 @@ void Message1::DeSerialize(int * dataBuf)
      dataRef = (int*) (&_randomNum);
     for(int i = 0; i < sizeof(_randomNum)/sizeof(int); i++){
         dataRef[i] = dataBuf[index++];}
-    int tempNum = (int) _character;
-    dataRef = (int*) (&tempNum);
-    for(int i = 0; i < sizeof(tempNum)/sizeof(int); i++){
+    dataRef = (int*) (&_character);
+    for(int i = 0; i < sizeof(int)/sizeof(int); i++){
         dataRef[i] = dataBuf[index++];}
     dataRef = (int*) (&_secondNum);
     for(int i = 0; i < sizeof(_secondNum)/sizeof(int); i++){
         dataRef[i] = dataBuf[index++];}
+
+	std::cout << "DATA " << _randomNum << " " << _character << " " << _secondNum << std::endl; 
 }

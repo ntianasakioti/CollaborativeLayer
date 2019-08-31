@@ -3,7 +3,8 @@
 CommInt::CommInt()
 {
 	//TO DO: read module id from file
-	moduleId = 0; 
+	_moduleId = 0;
+	_ASId = 1; 
 
 	Comm::GetInstance()->Init(); 
 	// Create singular Comm instance if it hasn't been 
@@ -21,16 +22,20 @@ bool CommInt::CheckForMessage(int moduleId)
 	return Comm::GetInstance()->CheckForMessage(moduleId);
 }
 
-int CommInt::SendMessage(std::string dest, int * dataBuffer)
+int CommInt::SendMessage(std::string dest, Message * msg)
 {
+	// Set Framework Message Header parameters
+	msg->SetId(_ASId, _ASId, -1);
+	msg->SetSourceId(_ASId, _moduleId);
+
 	if(dest == "All")
 	{
-		return Comm::GetInstance()->SendBd(dataBuffer);
+		return Comm::GetInstance()->SendBd(msg);
 		std::cout << "Done sending Bd at CommInt" << std::endl; 
 	}
 	else
 	{
-		return Comm::GetInstance()->SendPtoP(dataBuffer, dest);
+		return Comm::GetInstance()->SendPtoP(msg, dest);
 		std::cout << "Done Sending PtP at CommInt" << std::endl; 
 	}
 	return 0;
