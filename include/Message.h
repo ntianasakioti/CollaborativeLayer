@@ -37,17 +37,16 @@ public:
 	static int _headerSize;																	// header size
 
 protected:
-
 	static int _id; 																		// message id for this rover
- 
-
-private:	
 	std::tuple<int, int> _msgId;															// msg ID: <AS id, msg id> 
 	std::tuple<int,int> _sourceId;															// source ID : < AS id, module id>	
 	std::tuple<int,int> _destId;  															// destination ID: <AS id, module id>
 	char _commType; 																		// communication type (B for Bluetooth, R for Ros)	
 	int _msgDataSize; 																		// message size 
 	int _msgType; 
+
+private:	
+	
 };
 
 #endif

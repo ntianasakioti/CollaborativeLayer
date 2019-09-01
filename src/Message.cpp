@@ -82,12 +82,22 @@ int Message::GetHeaderSize()
     return Message::_headerSize;
 }
 
-void Message::SetHeaderAttr(std::tuple<int,int> msgId, int commType, int msgSize, int msgType, std::tuple<int, int> sourceId, std::tuple<int,int> destId)
+void Message::SetHeaderAttr(std::tuple<int,int> msgId, int commType, int msgType, int msgSize, std::tuple<int, int> sourceId, std::tuple<int,int> destId)
 {
-    _msgId = msgId;
+    std::cout << "Setting my attributes " <<  msgSize << std::endl;
+    this->_commType = '1';
+    std::cout<<"this:"<<this->_commType<<std::endl;
+    std::cout<<"Did it\n";
+    _msgId = std::make_pair(1, 1);
+    std::cout << 1 << std::endl;
     _sourceId = sourceId;
+    std::cout << 2 << std::endl; 
     _destId = destId;
+    std::cout << 3 << std::endl; 
     _commType = (char) commType;
+    std::cout << 4 << std::endl;
     _msgDataSize = msgSize;
+    std::cout << 5 << std::endl; 
     _msgType = msgType;
+    std::cout << "I set my attributes " << std::endl; 
 }

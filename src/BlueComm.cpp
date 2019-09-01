@@ -115,10 +115,10 @@ void BlueComm::ListeningThread()
 
 
 		// put int data into buffer int pointer array 
-		int * buf = new int[bufTemp[3]+8];
-		for(int i = 0; i < bufTemp[3]+ 8; i++)
+		int * buf = new int[bufTemp[4]+9];
+		for(int i = 0; i < bufTemp[4]+ 9; i++)
 		{
-			std::cout << "temp buf " << bufTemp[i] << std::endl; 
+			//std::cout << "temp buf " << bufTemp[i] << std::endl; 
 			buf[i] = bufTemp[i];
 		}
 
@@ -158,16 +158,16 @@ int BlueComm::SendPtoP(int * dataBuffer, std::string dest)
 	std::map<int, std::string>::iterator it = BdAddresses.begin();
 	while(it->first != id)
 	{
-		std::cout << "Comparing id " << it->first << "to " << id << std::endl;
+		//std::cout << "Comparing id " << it->first << "to " << id << std::endl;
 		it++;
-		std::cout << "incremented " << std:: endl; 
+		//std::cout << "incremented " << std:: endl; 
 	}
 
-	std::cout << "bluetooth address " << it->second << std::endl << std::flush;
+	//std::cout << "bluetooth address " << it->second << std::endl << std::flush;
 	char destination[18];
 	strcpy(destination,(it->second).c_str());
 
-	std::cout << "destination " << destination << std::endl << std::flush;
+	//std::cout << "destination " << destination << std::endl << std::flush;
 	
 	int s, status; 
 	struct sockaddr_rc addr = {0};
@@ -197,31 +197,31 @@ int BlueComm::SendPtoP(int * dataBuffer, std::string dest)
 		int_array[i] = dataBuffer[i];
 	}
 
-	std::cout << "Before I connect " << std::endl; 
+//	std::cout << "Before I connect " << std::endl; 
 
 	status = connect(s,(struct sockaddr*)&addr, sizeof(addr));
 
-	std::cout << "After I connect " << std::endl; 
-	std::cout << "status " << status << std::endl; 
+	//std::cout << "After I connect " << std::endl; 
+	//std::cout << "status " << status << std::endl; 
 	if(status == 0)
 	{
-		std::cout << "before writing " << std::endl;
+	//	std::cout << "before writing " << std::endl;
 		write(s, int_array,sizeof(int_array));
-		std::cout << "after writing " << std::endl; 
+	//	std::cout << "after writing " << std::endl; 
 		close(s);
 		std::cout << "Success in sending " << boost::posix_time::second_clock::local_time().time_of_day() << std::endl << std::flush;
 		return 1; 
 	}
 	else if(status < 0 )
 	{
-		std::cout  << "status " << status;
+		//std::cout  << "status " << status;
 		//delete msg; 
-		std::cout << "Before perror" << std::endl; 
+		//std::cout << "Before perror" << std::endl; 
 		perror("uh oh");
-		std::cout << "after perror" << std::endl; 
+		//std::cout << "after perror" << std::endl; 
 		//shutdown(s, SHUT_WR);
 		close(s);
-		std::cout << "I closed my socket" << std::endl; 
+	//	std::cout << "I closed my socket" << std::endl; 
 		return 0; 
 	}
 	close(s);
