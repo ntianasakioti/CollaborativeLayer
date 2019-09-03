@@ -32,8 +32,6 @@ public:
 	int GetHeaderSize();
 	void SetHeaderAttr(std::tuple<int,int> msgId, int commType, int msgSize, int msgType, std::tuple<int, int> sourceId, std::tuple<int,int> destId);
 
-   std::string data;
-
 	static int _headerSize;																	// header size
 
 protected:

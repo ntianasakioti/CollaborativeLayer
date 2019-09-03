@@ -16,7 +16,6 @@ public:
     std::string getData();
 
 private:
-  // std::string _data;
    int _randomNum; 
    char _character;
    double _secondNum;

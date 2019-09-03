@@ -13,6 +13,8 @@
 #include "Message1.h"
 #include "Message2.h"
 
+typedef Message * (*function_type)(int);
+
 class BaseComm
 {
 public:
@@ -27,6 +29,7 @@ public:
 	void UpdateMsgLogNum();
 	void MutexLock();
 	void MutexUnlock();
+	void setMsgFcnPtr(Message * (*fcnPtr)(int));
 	
 
 	Message * getMsgFromId(int id);
@@ -39,6 +42,7 @@ private:
 	static std::vector<std::vector<Message*>> messageBacklog;
 	std::mutex messageMutex; 
 	std::map<std::string, int> nameIDs;
+	static Message * (*_fcnPtr)(int);
 };
 
 #endif

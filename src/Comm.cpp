@@ -31,9 +31,9 @@ Comm * Comm::GetInstance()
 	return instance; 
 }
 
-void Comm::Init()
+void Comm::Init(Message * (*fcnPtr)(int))
 {
-	std::ifstream inf("config/nameIDs.txt"); 
+	std::ifstream inf("../catkin_ws/src/parent_comm/config/nameIDs.txt"); 
 
 	// if can't open file
 	if(!inf.is_open())
@@ -75,7 +75,7 @@ void Comm::Init()
 
 	// read comunication table file (commTable) to populate the commTable container
 
-	std::ifstream inf2("config/commTable.txt");
+	std::ifstream inf2("../catkin_ws/src/parent_comm/config/commTable.txt");
 	char temp;
 
 	// if can't open file
@@ -133,6 +133,7 @@ void Comm::Init()
 
 	std::map<char,BaseComm *>::iterator BaseCommIt = BaseCommPtrs.begin(); 
 	BaseCommIt->second->Init();
+	BaseCommIt->second->setMsgFcnPtr(fcnPtr);
 
 ///Code below will be used in actual implementation ///
 /*	for(int i = 0; i < numAS; i++)

@@ -44,7 +44,7 @@ public:
 	void Setup(); 
 	void InitComm();
 	/*
-		Init
+		InitComm
 			Parameters:
 				none
 			Return value:

@@ -1,12 +1,12 @@
 #include "CommInt.h"
 
-CommInt::CommInt()
+CommInt::CommInt(Message * (*fcnPtr)(int))
 {
 	//TO DO: read module id from file
 	_moduleId = 0;
 	_ASId = 1; 
 
-	Comm::GetInstance()->Init(); 
+	Comm::GetInstance()->Init(fcnPtr); 
 	// Create singular Comm instance if it hasn't been 
 	// created already
 	Comm::GetInstance()->AddMsgQueue();

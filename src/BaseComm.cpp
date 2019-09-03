@@ -1,6 +1,5 @@
 #include "BaseComm.h"
 
-
 Message * BaseComm::getMsgFromId(int id)
 {
 	Message1 * msg1; 
@@ -19,10 +18,11 @@ Message * BaseComm::getMsgFromId(int id)
 }
 
 std::vector<std::vector<Message*>> BaseComm::messageBacklog; 
+Message * (*BaseComm::_fcnPtr)(int);
 
 void BaseComm::Init()
 {
-	std::ifstream inf("config/nameIDs.txt"); 
+	std::ifstream inf("../catkin_ws/src/parent_comm/config/nameIDs.txt"); 
 
 	int id;
 	std::string friendlyName; 
@@ -37,7 +37,10 @@ void BaseComm::Init()
 	}
 	inf.close(); 
 }
-
+void BaseComm::setMsgFcnPtr(Message * (*fcnPtr)(int))
+{
+	_fcnPtr = fcnPtr; 
+}
 bool BaseComm::CheckForMessage(int moduleId)
 {
 	MutexLock();

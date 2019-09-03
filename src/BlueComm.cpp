@@ -13,7 +13,7 @@ BlueComm::~BlueComm()
 
 void BlueComm::Setup()
 {
-	std::ifstream inf("config/bdAddresses.txt"); 
+	std::ifstream inf("../catkin_ws/src/parent_comm/config/bdAddresses.txt"); 
 
 	// if can't open file
 	if(!inf.is_open())

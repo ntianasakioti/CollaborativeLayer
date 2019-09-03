@@ -16,7 +16,7 @@ class Comm
 {
 public:
 	static Comm * GetInstance();
-	void Init();														
+	void Init(Message * (*fcnPtr)(int));														
 	int SendPtoP(Message * msg, std::string dest);																					
 	int SendBd(Message * msg);					
 	// instead of above two, could have one function

@@ -6,7 +6,7 @@
 class CommInt
 {
 public:
-	CommInt();
+	CommInt(Message * (*fcnPtr)(int));
 	~CommInt();
 	bool CheckForMessage(int moduleId);
 	int SendMessage(std::string dest, Message * msg);
